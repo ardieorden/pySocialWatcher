@@ -347,7 +347,7 @@ def process_dau_audience_from_response(literal_response):
 
 def process_mau_audience_from_response(literal_response):
     aud = json.loads(literal_response)["data"][0]
-    audience = aud["estimate_mau"]
+    audience = aud["estimate_mau_upper_bound"]
     return int(audience)
 
 
