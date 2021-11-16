@@ -82,10 +82,10 @@ def handle_send_request_error(response, url, params, tryNumber):
                 logging.error("Error Message:" + str(error_json["error"]["message"]))
             if "error_subcode" in error_json["error"]:
                 logging.error("Error Subcode:" + str(error_json["error"]["error_subcode"]))
-            raise FatalException(str(error_json["error"]))
+            #raise FatalException(str(error_json["error"]))
     except Exception as e:
         logging.error(e)
-        raise FatalException(str(response.text))
+        #raise FatalException(str(response.text))
 
 
 def send_request(url, params, tryNumber=0):
@@ -100,7 +100,8 @@ def send_request(url, params, tryNumber=0):
     if response.status_code == 200:
         return response
     else:
-        return handle_send_request_error(response, url, params, tryNumber)
+        handle_send_request_error(response, url, params, tryNumber)
+        return
 
 
 def call_request_fb(row, token, account):
@@ -114,8 +115,10 @@ def call_request_fb(row, token, account):
     print_warning("\tSending in request: %s" % (payload_str))
     url = constants.REACHESTIMATE_URL.format(account)
     response = send_request(url, payload)
-    return response.content
-
+    if response == None:
+        return """{"data":[{"daily_outcomes_curve":[{"spend":0,"reach":0,"impressions":0,"actions":0}],"estimate_dau":0,"estimate_mau":0,"estimate_ready":true}]}"""
+    else:
+        return response.content
 
 def get_fake_response():
     response = requests.models.Response()
